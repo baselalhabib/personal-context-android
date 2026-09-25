@@ -66,11 +66,11 @@ personalContext.query<MessageEntity>()
 
 ## Roadmap
 
-**Phase 0 — done / in progress**
+**Phase 0 — done**
 - [x] Repo, README, LICENSE
-- [ ] `core` / `app` module split
-- [ ] `ContextEntity` interface + Room setup
-- [ ] Permissions helper
+- [x] `core` / `app` module split
+- [x] `ContextEntity` interface + Room setup
+- [x] Permissions helper
 
 **Phase 1 — first entities**
 - [ ] `NoteEntity` + connector

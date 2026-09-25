@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Personal Context"
 include(":app")
- 
+include(":core")
