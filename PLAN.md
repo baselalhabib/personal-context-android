@@ -75,7 +75,7 @@ personalContext.query<MessageEntity>()
 **Phase 1 — first entities**
 - [x] `NoteEntity` + connector
 - [x] `MessageEntity` (SMS) + connector
-- [ ] `AppUsageEntity` + connector
+- [x] `AppUsageEntity` + connector
 - [ ] Basic query API
 - [ ] Sample app: connector list, toggle on/off, browse stored data
 
