@@ -2,6 +2,7 @@ package com.baselalhabib.personalcontext.core.query
 
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
 import com.baselalhabib.personalcontext.core.entities.ContextEntity
+import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
 import com.baselalhabib.personalcontext.core.storage.PersonalContextDatabase
@@ -69,6 +70,7 @@ class ContextQuery<T : ContextEntity>(
             NoteEntity::class -> queryNotes()
             MessageEntity::class -> queryMessages()
             AppUsageEntity::class -> queryAppUsage()
+            LocationEntity::class -> queryLocations()
             else -> throw IllegalArgumentException("Unsupported entity class: ${entityClass.qualifiedName}")
         }
 
@@ -135,6 +137,18 @@ class ContextQuery<T : ContextEntity>(
             dao.getAppUsagesBetween(start, end)
         } else {
             dao.getAllAppUsages()
+        } as Flow<List<ContextEntity>>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun queryLocations(): Flow<List<ContextEntity>> {
+        val start = startTime
+        val end = endTime
+        val dao = database.locationDao()
+        return if (start != null && end != null) {
+            dao.getLocationsBetween(start, end)
+        } else {
+            dao.getAllLocations()
         } as Flow<List<ContextEntity>>
     }
 }

@@ -5,11 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
+import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
 
 @Database(
-    entities = [NoteEntity::class, MessageEntity::class, AppUsageEntity::class],
+    entities = [
+        NoteEntity::class,
+        MessageEntity::class,
+        AppUsageEntity::class,
+        LocationEntity::class
+    ],
     version = 1,
     exportSchema = false
 )
@@ -18,6 +24,7 @@ abstract class PersonalContextDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun messageDao(): MessageDao
     abstract fun appUsageDao(): AppUsageDao
+    abstract fun locationDao(): LocationDao
 
     companion object {
         @Volatile

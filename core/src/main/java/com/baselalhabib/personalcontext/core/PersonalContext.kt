@@ -4,6 +4,7 @@ import android.content.Context
 import com.baselalhabib.personalcontext.core.connectors.Connector
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
 import com.baselalhabib.personalcontext.core.entities.ContextEntity
+import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
 import com.baselalhabib.personalcontext.core.query.ContextQuery
@@ -55,6 +56,7 @@ class PersonalContext(
         database.noteDao().deleteAll()
         database.messageDao().deleteAll()
         database.appUsageDao().deleteAll()
+        database.locationDao().deleteAll()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -64,6 +66,7 @@ class PersonalContext(
             is NoteEntity -> database.noteDao().insertAll(entities as List<NoteEntity>)
             is MessageEntity -> database.messageDao().insertAll(entities as List<MessageEntity>)
             is AppUsageEntity -> database.appUsageDao().insertAll(entities as List<AppUsageEntity>)
+            is LocationEntity -> database.locationDao().insertAll(entities as List<LocationEntity>)
         }
     }
 }

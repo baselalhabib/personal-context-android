@@ -2,12 +2,15 @@ package com.baselalhabib.personalcontext.core
 
 import androidx.room.InvalidationTracker
 import com.baselalhabib.personalcontext.core.connectors.AppUsageConnector
+import com.baselalhabib.personalcontext.core.connectors.LocationConnector
 import com.baselalhabib.personalcontext.core.connectors.MessageConnector
 import com.baselalhabib.personalcontext.core.connectors.NoteConnector
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
+import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
 import com.baselalhabib.personalcontext.core.storage.AppUsageDao
+import com.baselalhabib.personalcontext.core.storage.LocationDao
 import com.baselalhabib.personalcontext.core.storage.MessageDao
 import com.baselalhabib.personalcontext.core.storage.NoteDao
 import com.baselalhabib.personalcontext.core.storage.PersonalContextDatabase
@@ -151,6 +154,24 @@ class PersonalContextTest {
     }
 
     @Test
+    fun `sync and query work for LocationEntity`() = runBlocking {
+        val locationConnector = LocationConnector()
+        locationConnector.addLocation(
+            latitude = 37.7749,
+            longitude = -122.4194,
+            timestamp = 1000L
+        )
+
+        personalContext.sync(locationConnector)
+
+        val locations = personalContext.query<LocationEntity>().execute()
+
+        assertEquals(1, locations.size)
+        assertEquals(37.7749, locations[0].latitude, 0.0001)
+        assertEquals(-122.4194, locations[0].longitude, 0.0001)
+    }
+
+    @Test
     fun `clearAllData removes all stored entities from database`() = runBlocking {
         val noteConnector = NoteConnector()
         noteConnector.addNote(title = "Note", content = "Content")
@@ -160,24 +181,31 @@ class PersonalContextTest {
         messageConnector.addMessage(sender = "Sender", body = "Body")
         personalContext.sync(messageConnector)
 
+        val locationConnector = LocationConnector()
+        locationConnector.addLocation(latitude = 12.34, longitude = 56.78)
+        personalContext.sync(locationConnector)
+
         personalContext.clearAllData()
 
         assertTrue(personalContext.query<NoteEntity>().execute().isEmpty())
         assertTrue(personalContext.query<MessageEntity>().execute().isEmpty())
+        assertTrue(personalContext.query<LocationEntity>().execute().isEmpty())
     }
 
     private class FakePersonalContextDatabase : PersonalContextDatabase() {
         private val noteDaoFake = FakeNoteDao()
         private val messageDaoFake = FakeMessageDao()
         private val appUsageDaoFake = FakeAppUsageDao()
+        private val locationDaoFake = FakeLocationDao()
 
         override fun noteDao(): NoteDao = noteDaoFake
         override fun messageDao(): MessageDao = messageDaoFake
         override fun appUsageDao(): AppUsageDao = appUsageDaoFake
+        override fun locationDao(): LocationDao = locationDaoFake
 
         override fun clearAllTables() {}
         override fun createInvalidationTracker(): InvalidationTracker {
-            return InvalidationTracker(this, "notes", "messages", "app_usage")
+            return InvalidationTracker(this, "notes", "messages", "app_usage", "locations")
         }
     }
 
@@ -240,6 +268,27 @@ class PersonalContextTest {
 
         override suspend fun deleteAll() {
             usages.clear()
+            flow.value = emptyList()
+        }
+    }
+
+    private class FakeLocationDao : LocationDao {
+        private val locations = mutableListOf<LocationEntity>()
+        private val flow = MutableStateFlow<List<LocationEntity>>(emptyList())
+
+        override suspend fun insertAll(locations: List<LocationEntity>) {
+            this.locations.addAll(locations)
+            flow.value = this.locations.sortedByDescending { it.timestamp }
+        }
+
+        override fun getAllLocations(): Flow<List<LocationEntity>> = flow
+
+        override fun getLocationsBetween(startTime: Long, endTime: Long): Flow<List<LocationEntity>> {
+            return flow.map { list -> list.filter { it.timestamp in startTime..endTime } }
+        }
+
+        override suspend fun deleteAll() {
+            locations.clear()
             flow.value = emptyList()
         }
     }

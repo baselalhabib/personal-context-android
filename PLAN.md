@@ -45,7 +45,7 @@ personal-context-android/
 | `NoteEntity` | in-app / synced | none |
 | `MessageEntity` | SMS provider | `READ_SMS` |
 | `AppUsageEntity` | `UsageStatsManager` | Usage Access |
-| `LocationEntity` | Fused Location Provider | location |
+| `LocationEntity` | LocationProvider | location (`ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION`) |
 | `CallLogEntity` | call log provider | `READ_CALL_LOG` |
 | `ContactEntity` | contacts provider | contacts |
 | `EmailEntity` | IMAP or account access | later phase, unresolved |
@@ -80,7 +80,8 @@ personalContext.query<MessageEntity>()
 - [ ] Sample app: connector list, toggle on/off, browse stored data
 
 **Phase 2**
-- [ ] `LocationEntity`, `CallLogEntity`, `ContactEntity`
+- [x] `LocationEntity` + connector
+- [ ] `CallLogEntity`, `ContactEntity`
 - [ ] JSON export, wipe
 - [ ] Background sync (WorkManager)
 - [ ] Contributor doc: adding a new connector
@@ -89,4 +90,3 @@ personalContext.query<MessageEntity>()
 - [ ] Aggregation/query helpers
 - [ ] Local LLM querying the stored context
 - [ ] `EmailEntity`
-
