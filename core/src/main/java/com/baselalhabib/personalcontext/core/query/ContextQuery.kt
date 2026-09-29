@@ -1,6 +1,8 @@
 package com.baselalhabib.personalcontext.core.query
 
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
+import com.baselalhabib.personalcontext.core.entities.CallLogEntity
+import com.baselalhabib.personalcontext.core.entities.ContactEntity
 import com.baselalhabib.personalcontext.core.entities.ContextEntity
 import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
@@ -71,6 +73,8 @@ class ContextQuery<T : ContextEntity>(
             MessageEntity::class -> queryMessages()
             AppUsageEntity::class -> queryAppUsage()
             LocationEntity::class -> queryLocations()
+            CallLogEntity::class -> queryCallLogs()
+            ContactEntity::class -> queryContacts()
             else -> throw IllegalArgumentException("Unsupported entity class: ${entityClass.qualifiedName}")
         }
 
@@ -149,6 +153,30 @@ class ContextQuery<T : ContextEntity>(
             dao.getLocationsBetween(start, end)
         } else {
             dao.getAllLocations()
+        } as Flow<List<ContextEntity>>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun queryCallLogs(): Flow<List<ContextEntity>> {
+        val start = startTime
+        val end = endTime
+        val dao = database.callLogDao()
+        return if (start != null && end != null) {
+            dao.getCallLogsBetween(start, end)
+        } else {
+            dao.getAllCallLogs()
+        } as Flow<List<ContextEntity>>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun queryContacts(): Flow<List<ContextEntity>> {
+        val start = startTime
+        val end = endTime
+        val dao = database.contactDao()
+        return if (start != null && end != null) {
+            dao.getContactsBetween(start, end)
+        } else {
+            dao.getAllContacts()
         } as Flow<List<ContextEntity>>
     }
 }

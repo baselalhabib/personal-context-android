@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
 import com.baselalhabib.personalcontext.core.entities.CallLogEntity
+import com.baselalhabib.personalcontext.core.entities.ContactEntity
 import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
@@ -16,9 +17,10 @@ import com.baselalhabib.personalcontext.core.entities.NoteEntity
         MessageEntity::class,
         AppUsageEntity::class,
         LocationEntity::class,
-        CallLogEntity::class
+        CallLogEntity::class,
+        ContactEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class PersonalContextDatabase : RoomDatabase() {
@@ -28,6 +30,7 @@ abstract class PersonalContextDatabase : RoomDatabase() {
     abstract fun appUsageDao(): AppUsageDao
     abstract fun locationDao(): LocationDao
     abstract fun callLogDao(): CallLogDao
+    abstract fun contactDao(): ContactDao
 
     companion object {
         @Volatile

@@ -4,6 +4,7 @@ import android.content.Context
 import com.baselalhabib.personalcontext.core.connectors.Connector
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
 import com.baselalhabib.personalcontext.core.entities.CallLogEntity
+import com.baselalhabib.personalcontext.core.entities.ContactEntity
 import com.baselalhabib.personalcontext.core.entities.ContextEntity
 import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity

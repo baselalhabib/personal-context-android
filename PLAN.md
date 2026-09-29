@@ -82,7 +82,7 @@ personalContext.query<MessageEntity>()
 **Phase 2**
 - [x] `LocationEntity` + connector
 - [x] `CallLogEntity` + connector
-- [ ] `ContactEntity` + connector
+- [x] `ContactEntity` + connector
 - [ ] JSON export, wipe
 - [ ] Background sync (WorkManager)
 - [ ] Contributor doc: adding a new connector
