@@ -2,14 +2,17 @@ package com.baselalhabib.personalcontext.core
 
 import androidx.room.InvalidationTracker
 import com.baselalhabib.personalcontext.core.connectors.AppUsageConnector
+import com.baselalhabib.personalcontext.core.connectors.CallLogConnector
 import com.baselalhabib.personalcontext.core.connectors.LocationConnector
 import com.baselalhabib.personalcontext.core.connectors.MessageConnector
 import com.baselalhabib.personalcontext.core.connectors.NoteConnector
 import com.baselalhabib.personalcontext.core.entities.AppUsageEntity
+import com.baselalhabib.personalcontext.core.entities.CallLogEntity
 import com.baselalhabib.personalcontext.core.entities.LocationEntity
 import com.baselalhabib.personalcontext.core.entities.MessageEntity
 import com.baselalhabib.personalcontext.core.entities.NoteEntity
 import com.baselalhabib.personalcontext.core.storage.AppUsageDao
+import com.baselalhabib.personalcontext.core.storage.CallLogDao
 import com.baselalhabib.personalcontext.core.storage.LocationDao
 import com.baselalhabib.personalcontext.core.storage.MessageDao
 import com.baselalhabib.personalcontext.core.storage.NoteDao
@@ -197,15 +200,17 @@ class PersonalContextTest {
         private val messageDaoFake = FakeMessageDao()
         private val appUsageDaoFake = FakeAppUsageDao()
         private val locationDaoFake = FakeLocationDao()
+        private val callLogDaoFake = FakeCallLogDao()
 
         override fun noteDao(): NoteDao = noteDaoFake
         override fun messageDao(): MessageDao = messageDaoFake
         override fun appUsageDao(): AppUsageDao = appUsageDaoFake
         override fun locationDao(): LocationDao = locationDaoFake
+        override fun callLogDao(): CallLogDao = callLogDaoFake
 
         override fun clearAllTables() {}
         override fun createInvalidationTracker(): InvalidationTracker {
-            return InvalidationTracker(this, "notes", "messages", "app_usage", "locations")
+            return InvalidationTracker(this, "notes", "messages", "app_usage", "locations", "call_logs")
         }
     }
 
@@ -289,6 +294,27 @@ class PersonalContextTest {
 
         override suspend fun deleteAll() {
             locations.clear()
+            flow.value = emptyList()
+        }
+    }
+
+    private class FakeCallLogDao : CallLogDao {
+        private val callLogs = mutableListOf<CallLogEntity>()
+        private val flow = MutableStateFlow<List<CallLogEntity>>(emptyList())
+
+        override suspend fun insertAll(callLogs: List<CallLogEntity>) {
+            this.callLogs.addAll(callLogs)
+            flow.value = this.callLogs.sortedByDescending { it.timestamp }
+        }
+
+        override fun getAllCallLogs(): Flow<List<CallLogEntity>> = flow
+
+        override fun getCallLogsBetween(startTime: Long, endTime: Long): Flow<List<CallLogEntity>> {
+            return flow.map { list -> list.filter { it.timestamp in startTime..endTime } }
+        }
+
+        override suspend fun deleteAll() {
+            callLogs.clear()
             flow.value = emptyList()
         }
     }
